@@ -1,0 +1,10 @@
+# ignore venv
+/transcriber-venv
+
+# ignore .env
+*.env
+!.env.template
+
+# ignore test path
+/todo1
+
