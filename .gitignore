@@ -1,5 +1,11 @@
+# mac files
+*/.DS_Store
+
 # ignore venv
 /transcriber-venv
+/venv
+# this is the correct venv path
+/.venv
 
 # ignore .env
 *.env

@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+import tempfile
 
 from openai import OpenAI
 import os
@@ -34,153 +34,55 @@ def is_audio_file(filename):
     """Check if the file is a supported audio format."""
     return any(filename.endswith(ext) for ext in ['.mp3', '.m4a', '.aac', '.wav'])
 
+def split_audio(file):
+    chunk_size_ms = 9 * 60 * 1000  # 9 minutes in milliseconds
 
-def get_audio_duration(file_path):
-    audio = AudioSegment.from_file(file_path)
-    return audio.duration_seconds
+    chunk_files = []
 
+    for i in range(0, len(file), chunk_size_ms):
+        chunk = file[i:i+chunk_size_ms]
+        # Create a temporary file for each chunk
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as f:
+            chunk.export(f.name, format='mp3')
+            chunk_files.append(f.name)
 
-# def split_audio(audio_file, chunk_duration):
-#     """Split audio file into chunks of specified duration."""
-#     audio = AudioSegment.from_file(audio_file, format=None)
-#     chunks = []
-#     current_start = 0
-#
-#     while current_start < len(audio):
-#         current_chunk = audio[current_start:current_start + chunk_duration * 1000]
-#         if format is None:
-#             chunks.append(current_chunk)
-#         else:
-#             chunks.append(current_chunk.export(format=format).read())
-#         current_start += chunk_duration * 1000
-#
-#     return chunks
-
-# def split_audio(audio_file, chunk_duration, formato=None):
-#     """Split audio file into chunks of specified duration."""
-#
-#     # Guess the file format based on its extension
-#     mimetype = mimetypes.guess_type(audio_file)[0]
-#     ext_format = mimetype.split('/')[-1] if mimetype else None
-#
-#     # Handle .m4a files
-#     # if formato == 'mp4a-latm':
-#     #     formato = 'aac'
-#     #
-#     # logger.debug("processing audio file: " + audio_file)
-#     # logger.debug("guessed format: " + ext_format)
-#     # if formato is None:
-#     #     formato = ext_format
-#
-#     audio = AudioSegment.from_file(audio_file, "aac") # TODO: dont fix this
-#     chunks = []
-#     current_start = 0
-#
-#     while current_start < len(audio):
-#         current_chunk = audio[current_start:current_start + chunk_duration * 1000]
-#         if formato is None:
-#             chunks.append(current_chunk)
-#         else:
-#             chunks.append(current_chunk.export(format=formato).read())
-#         current_start += chunk_duration * 1000
-#
-#     return chunks
-
-
-def split_audio(audio_file, chunk_duration):
-    """Split audio file into chunks of specified duration."""
-    # Open the input file
-    input_container = av.open(audio_file)
-
-    # Select the audio stream
-    audio_stream = next(s for s in input_container.streams if s.type == 'audio')
-
-    # Calculate the number of frames per chunk
-    frames_per_chunk = chunk_duration * audio_stream.rate
-
-    chunks = []
-    current_chunk = b''
-    current_frame = 0
-
-    # Iterate over the audio frames
-    for frame in input_container.decode(audio_stream):
-        # Add the frame to the current chunk
-        current_chunk += frame.planes[0]
-
-        # If the current chunk has enough frames, add it to the chunks list
-        if current_frame + frame.samples >= frames_per_chunk:
-            chunks.append(current_chunk)
-            current_chunk = b''
-            current_frame = 0
-
-        current_frame += frame.samples
-
-    # Add the last chunk if it's not empty
-    if current_chunk:
-        chunks.append(current_chunk)
-
-    return chunks
+    return chunk_files
 
 
 # TODO:
-#   - Utilize previously transcribed chunks as context for each new chunk in some AI powered way
+#   - Use the prompt field to provide context from the previous chunks (which must be length minimized as the max length is 241 characters)
+def transcribe_chunk(chunk, prompt):
+    transcription = client.audio.transcriptions.create(
+        model="whisper-1",
+        file=chunk,
+        language="en",
+        prompt=prompt,
+        response_format="text",
+    )
 
-def transcribe_chunk(chunk):
-    # Convert chunk to bytes
-    chunk_bytes = chunk.export("temp.wav", format="wav").read()
+    return transcription
 
-    # Make API request
-    with open("temp.wav", "rb") as audio_file:
-        response = client.audio.transcriptions.create(
-            model="whisper-1",
-            file=audio_file,
-            response_format="text",
-            prompt="" # TODO: this is 244 char max, use for acronyms, punctuation, and limited context.
-                      #   ...figure out how the hell to add context to the request.
-        )
-    return response.text
+def transcribe_audio(file):
+    audio_f = AudioSegment.from_file(file)
+    if audio_f.duration_seconds < 10 * 60:  # 10 minutes
+        return transcribe_chunk(audio_f, "")  # no prompt is correct when there is only 1 chunk
+    chunk_files = split_audio(audio_f)
 
+    transcription = ""
 
-def transcribe_audio(file_path):
-    "combine chunk transcriptions for final string"
-    chunks = split_audio(file_path, chunk_duration=get_audio_duration(file_path))
-    transcriptions = [transcribe_chunk(chunk) for chunk in chunks]
-    full_transcription = " ".join(transcriptions)
-    return full_transcription
+    index = 0
+    for chunk_file in chunk_files:
+        with open(chunk_file, 'rb') as f:
+            logger.info(f"Transcribing chunk: {chunk_file}" + Fore.WHITE + f" ({index + 1}/{len(chunk_files)})" + Style.RESET_ALL)
+            logger.debug(Fore.LIGHTWHITE_EX + f"chunk size: {os.path.getsize(chunk_file)} bytes" + Style.RESET_ALL)
+            transcription += transcribe_chunk(f, transcription)
+        os.remove(chunk_file)  # Delete the temporary file
+        index += 1
 
+    return transcription
 
-
-# def transcribe_audio(file_path):
-#     """Transcribe audio file using OpenAI Whisper model."""
-#     logger.info(f"Transcribing audio file: {file_path}")
-#     model = whisper.load_model("base")
-#     result = model.transcribe(file_path)
-#     return result['text']
-
-# def transcribe_audio(file_path):
-#     """Transcribe audio file using OpenAI Whisper ASR API."""
-#     logger.info(f"Transcribing audio file: {file_path}")
-#
-#     # Open the audio file
-#     with open(file_path, "rb") as audio_file:
-#         while True:
-#             # Read audio data in chunks
-#             audio_data = audio_file.read(1024)
-#             if not audio_data:
-#                 break
-#
-#             # Send the API request and get the response
-#             response = openai.Whisper.read(audio=audio_data)
-#
-#             # Check the response status
-#             if response['status'] != 'completed':
-#                 logger.error(f"Failed to transcribe audio file: {file_path}. Response status: {response['status']}")
-#                 return None
-#
-#             # Get the transcription
-#             result = response['choices'][0]['text']
-#             return result
-
+# TODO:
+#   - Utilize GPT-4 or GPT-4o to intelligently convert the transcription into a nested list in YAML format
 def convert_to_yaml(transcription_text):
     """Convert transcription text to YAML format."""
     # Here we assume the transcription text follows a certain structure
@@ -213,7 +115,9 @@ def process_directory(directory_path):
     audio_files = [f for f in glob.glob(os.path.join(directory_path, '*')) if is_audio_file(f)]
     all_transcriptions = []
     for audio_file in audio_files:
+        logger.info(f"Processing audio file: {audio_file}")
         transcription = transcribe_audio(audio_file)
+        logger.info(f"Transcription: {transcription}")
         yaml_data = convert_to_yaml(transcription)
         all_transcriptions.append(yaml_data)
 
