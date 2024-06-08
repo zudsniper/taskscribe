@@ -103,12 +103,26 @@ def transcribe_audio(file):
 def convert_to_yaml(transcription_text):
     """Convert transcription text to YAML format."""
     # TODO:
-    #  - Use GPT-4 or GPT-4o to convert the transcription into a nested list in YAML format
-    #  - This is the highest priority task since transcription works.
-    #  - Testing this will also be expensive, so it needs to be done carefully.
-    # Here we assume the transcription text follows a certain structure
-    # This function should be adapted based on the specific structure of the transcription text
-    data = yaml.safe_load(transcription_text)
+    #   - Test this implementation with a variety of transcription texts to ensure it works as expected
+    #   - Work on the conversion prompt -- it could be more effective in guiding the AI to generate the desired output from a spoken transcription
+    conversion_prompt = "Convert the following transcription into a YAML formatted checklist: \n\n" + transcription_text + "\n\n---\n\n"
+    logger.debug("Conversion prompt (" + Fore.MAGENTA + str(len(conversion_prompt)) + Style.RESET_ALL + "): \n" + (conversion_prompt[:100] + "..." + conversion_prompt[-100:]) if len(conversion_prompt) > 100 else conversion_prompt + "\n")
+
+    logger.info("Converting transcription to YAML format using GPT...")
+    response = client.completions.create(
+        model="gpt-4o",  # 4o hopefully is a valid model for API
+        prompt=conversion_prompt,
+        max_tokens=1000,  # does this need to be modified dynamically? probably does :C
+        temperature=0.5,
+        top_p=1.0,
+        frequency_penalty=0.0,
+        presence_penalty=0.0,
+        stop=["\n"]
+    )  # what the fuck do these mean??
+
+    gen_yaml_str = response.choices[0].text.strip()
+
+    data = yaml.safe_load(gen_yaml_str)  # this is gonna throw hella errors
     return data
 
 
