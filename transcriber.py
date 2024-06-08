@@ -12,10 +12,33 @@ from loguru import logger
 from dotenv import load_dotenv
 from pydub import AudioSegment
 
-# Load environment variables from .env file
+# --- HELPER FUNCTIONS --- #
+def str_to_bool(value):
+    """Receives all sorts of values and interprets as yes or no"""
+    if value is None:
+        return False
+    str_to_bool_map = {'true': True, 'yes': True, 'y': True, '0': False, 'false': False, 'no': False, 'n': False, '1': True}  # TODO: this is sort of haphazard, should be more robust I think
+    try:
+        return str_to_bool_map.get(value.lower(), bool(int(value)))
+    except ValueError:
+        return False
+
+
+# Populate environment variables from .env file
 load_dotenv()
 
-# Load OpenAI API key from environment variable
+# Check dev env vars / special behavior
+skip_whisper = not str_to_bool(os.getenv("DEV_LOAD_TRANSCRIPT"))  # no idea why I flipped it like this, but it's what I did
+transcript_path = os.getenv("DEV_TRANSCRIPT_PATH")  # should be to a text file that is the transcript in plaintext
+
+if skip_whisper:
+    logger.warning("[DEV_LOAD_TRANSCRIPT] Skipping OpenAI transcription of audio files & loading transcript from file instead.")
+    logger.info(f"Loading transcript from {transcript_path}...")
+    with open(transcript_path, 'r') as f:
+        dev_transcript = f.read()
+
+
+# get OpenAI API key from env var
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
 if not openai_api_key:
@@ -24,11 +47,6 @@ if not openai_api_key:
 
 client = OpenAI(api_key=openai_api_key)
 logger.info(Fore.GREEN + "Initialized OpenAI client." + Style.RESET_ALL)
-
-
-# set the API key
-# client.api_key = openai_api_key
-# NOTE  -- this is AUTOMATICALLY SET for the environment by the env variable.
 
 def is_audio_file(filename):
     """Check if the file is a supported audio format."""
@@ -81,10 +99,13 @@ def transcribe_audio(file):
 
     return transcription
 
-# TODO:
-#   - Utilize GPT-4 or GPT-4o to intelligently convert the transcription into a nested list in YAML format
+# TODO: FINISH THIS FUNCTION (it's like the entire value-add)
 def convert_to_yaml(transcription_text):
     """Convert transcription text to YAML format."""
+    # TODO:
+    #  - Use GPT-4 or GPT-4o to convert the transcription into a nested list in YAML format
+    #  - This is the highest priority task since transcription works.
+    #  - Testing this will also be expensive, so it needs to be done carefully.
     # Here we assume the transcription text follows a certain structure
     # This function should be adapted based on the specific structure of the transcription text
     data = yaml.safe_load(transcription_text)
@@ -100,7 +121,10 @@ def convert_yaml_to_markdown(yaml_data):
 
 def process_file(file_path):
     """Process a single audio file to generate markdown checklist."""
-    transcription = transcribe_audio(file_path)
+    if skip_whisper:
+        transcription = dev_transcript
+    else:
+        transcription = transcribe_audio(file_path)
     yaml_data = convert_to_yaml(transcription)
     markdown_content = convert_yaml_to_markdown(yaml_data)
     output_file = file_path.rsplit('.', 1)[0] + '.md'
@@ -110,18 +134,25 @@ def process_file(file_path):
     return output_file
 
 
+# TODO:
+#   - Handle parse order of audio files: in example, they were parsed in an order which is not the order they were recorded in;
+#   - This may end up being inconsequential, but it's worth noting
 def process_directory(directory_path):
     """Process all audio files in a directory (non-recursively) to generate a combined markdown checklist."""
-    audio_files = [f for f in glob.glob(os.path.join(directory_path, '*')) if is_audio_file(f)]
-    all_transcriptions = []
-    for audio_file in audio_files:
-        logger.info(f"Processing audio file: {audio_file}")
-        transcription = transcribe_audio(audio_file)
-        logger.info(f"Transcription: {transcription}")
-        yaml_data = convert_to_yaml(transcription)
-        all_transcriptions.append(yaml_data)
+    if skip_whisper:
+        combined_yaml = convert_to_yaml(dev_transcript)
+    else:
+        audio_files = [f for f in glob.glob(os.path.join(directory_path, '*')) if is_audio_file(f)]
+        all_transcriptions = []
+        for audio_file in audio_files:
+            logger.info(f"Processing audio file: {audio_file}")
+            transcription = transcribe_audio(audio_file)
+            logger.info(f"Transcription: {transcription}")
+            yaml_data = convert_to_yaml(transcription)
+            all_transcriptions.append(yaml_data)
 
-    combined_yaml = {'list': all_transcriptions}
+        combined_yaml = {'list': all_transcriptions}
+
     markdown_content = convert_yaml_to_markdown(combined_yaml)
     output_file = os.path.join(directory_path, os.path.basename(directory_path).upper() + '.md')
     with open(output_file, 'w') as f:

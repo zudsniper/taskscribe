@@ -1,0 +1,404 @@
+Okay, I have a number of things that I need to do. First... First and foremost,
+ I guess, is... Hold on. Fuck. That's not the first thing. Okay. The first thing...
+ Alright, this isn't a fucking number list, but I am going to say priorities. So...
+ Or... They'll be implied, I guess. Later, I'm going to ask for this to be sorted
+ in a priority order, so please... If I... If intonation or something... I don't
+ know, this is recording. So, first I need to reply to my job application emails.
+ As in, follow up with the people who already sent me follow up emails, if there
+ are incomplete applications, if there are anything besides rejections. I also need
+ to note that information down in some way. Probably a Google Sheet that is... Or
+ a Google Form that outputs into a Google Sheet that I also need to set up. Next
+ item... I need to do that research for... Ignore that. That was that woman speaking,
+ please. Next is I need to do that research for cash. So, K-A-S-H. No further details.
+ Next item... I need to... Email the... Email the Lazy Apply people and... Convey
+ my interest in helping them with their project. Be it just fixing their... Like,
+ the small spelling mistakes or translation or... Making their text flow better,
+ fixing their UI, etc. Or, more substantively, I need to... Or I would like to ask
+ them if they want help with some of the more minutia. With the AI implementation,
+ for instance. When... When a job application is being... One thing that I ran into
+ was the question, Are you able to work immediately? Can you start immediately? Where
+ my system was automatically selecting no. And that is not what I want. Moreover,
+ another potential fix... These are like sub-items for this task. Is that... When...
+ When filling in information for a resume... I think that could be made much more
+ intuitive. Especially as to what fields... Are what and what they're used for. So
+ maybe on-hover tooltips that explain what the fields for each one are used for.
+ For instance, like... Some of them are obvious, but they could still be on-hovers
+ that would be helpful. For some people, like the are you a veteran status, etc.
+ For disclosures, but also the less obvious ones. Another fix I would make or tweak
+ or addition would be... Instead of only allowing for skill keywords... So how it
+ currently seems to work is... Some artificial intelligence, probably OpenAI API
+ or some L1 model... Is being used to detect when a... Or even just... It could just
+ be... Dot contains, but something is being used to determine when... A skill keyword
+ is used in a question. For instance, for the LinkedIn Easy Apply, which is the only
+ thing that I've really done. And that, if you have put a number of years of proficiency
+ with that tool... Or with that skill, be it a tool or program or whatever... It
+ will fill it in with the value that you've provided. Or with your one failsafe or
+ the default value. Which is by default set to zero. First of all, I think that value,
+ again, with the tooltip... That tooltip on that would be very helpful to explain
+ exactly what it does. Or what it means, because the description text, the placeholder
+ text is not very clear. And I think it would need to be too long for the placeholder
+ text to actually be very clear as to what it's for. But further, I think that there
+ could be better or more options for that. So say you have categories, like database,
+ databases... Wherein you could select that your default for databases in general
+ would be two hours. Or hours. Two years. Not hours. Two years of proficiency. And
+ then when any question... Even if you haven't specifically input as a skill, no
+ SQL... Even if you haven't specifically put in DynamoDB or CouchDB or any of those...
+ Or PostgreSQL... It would default to your database's default. As opposed to your
+ overall default. Which would then... The overall default would be a fallback if
+ none of the categories are matched. And then above that would be the specific skill
+ keywords. And I think that would be helpful. Because you could do databases, you
+ could do artificial intelligence... Which would have keywords like AI, LLM, GPT,
+ and a lot more. Neural network. And there would be a lot of categories. I think
+ you should be able to create your own. But also have them pre-programmed the categories.
+ But it would be good to be able to add your own. I guess you don't necessarily need
+ to have pre-programmed ones. But being able to add your own would be very helpful.
+ In terms of granularity and making your application look more legitimate. I mean,
+ not legitimate, but non-automated. Further, I think there's a lot that could be
+ done. In terms of when questions are asked within the LinkedIn Easy Apply. Specifically,
+ non-choose-an-option questions. So, for instance, open response questions. I think
+ there should be a way to... Well, first this would need to be configured, obviously.
+ But within the Lazy Apply settings or configuration panel. I think it would probably
+ be better to call it that. There would need to be a short response samples input.
+ Wherein people would provide some of their own writing that they've already done.
+ Ideally for short response of the type of job that they're looking for. But really
+ it could be any sort of text which conveys their stylometry. Which is to say any
+ text that they've written themselves and is not generated at all. And then some
+ amount of that needs to be provided. It shouldn't autofill without this being configured.
+ And then maybe there are minimums and there are probably maximums for data storage.
+ Anyway, this short response answer synthesis artificial intelligence would just
+ be... It'd be pretty simple. We'll use GPT as an example. Like GPT 3.5 or GPT 4.0.
+ We'll use GPT 4.0 as an example. So it'd be GPT 4.0, fine-tuned. Or even just route-prompted
+ with the information that it is to follow the stylometric cues of... To make the
+ text that it synthesizes follow the stylometry. Which is analyzed from the uploaded
+ documents or supplied text. Or maybe just text. Actually probably just a lot of
+ text input. It's smaller. And it's text input. So yeah, just a lot of text. But
+ text input. So the end user would go to a configuration page for this. And they
+ could add as many fields as they wanted. Big text boxes. And they'd probably have
+ a title. And then they would paste in their text that they've already written. And
+ then the AI, the model that is being used would be told to analyze the stylometry
+ of all of that text. And then would be then queried whenever a short response question
+ is given. Or is it come upon in the application process. And then that model which
+ has been told to analyze the stylometry of the user's writing. Would then be prompted
+ to give an answer for that question. Using in its answer the stylometry which was
+ analyzed. Where in it sounds like the user wrote it. That might have some ethical
+ or legal quandaries. So that might not be viable. But I think that would be very
+ helpful. And I'm sure there are probably ways around it. Or ways to skirt liability
+ in terms of push the liability off onto the end user. Or maybe they would have to
+ supply a trade model or whatever. It would only fair for super users. Which is fine.
+ And it can be payment gated to a high tier of the application. Which is lazy apply.
+ Anyway, there are more of those. But the net net is I need to email the lazy apply
+ people. And express my interest. And then provide some of this information. To show
+ my interest. And then. Yeah that's. So okay cool. That's the end of that. Next item
+ is. I need to go back and for the steam account. Bigzoinkle11. Which is spelled
+ B-I-G-C-O-I-N-K-E-L-1-1. For Bigzoinkle11 account. I need to go and re-add the authenticator.
+ Steam desktop authenticator is what I will probably use to do so. And then maybe
+ add a sub-item. Potentially create. Python code that will accomplish the same task
+ as steam desktop authenticator. Which is written in C sharp. And I just don't really
+ like the application. Also because it was made by Jesse. And Jesse is creepy. Child
+ groomer. Not much I think. But yeah he's creepy. So anyway that's a sub-item. But
+ probably a waste of time. Okay much more high priority than those other ones. Besides.
+ Okay never mind. So new item. This one is high priority. Is I need to follow up
+ with the deans. Check my school email. This is about college. About finishing school.
+ I need to follow up on enrollment. Because it ends August 18th. And the classes
+ that I need are going to be filled up. Probably pretty soon. But I need to determine.
+ I need to follow up with the associate dean of students who I spoke to on teams.
+ For a moment. And who reached out to the NAW team for me. The non-academic withdrawal.
+ That's what NAW is. N-A-W. Reached out to the non-academic withdrawal team for me.
+ As I was told to non-academic withdrawal from a semester. And walked through it
+ by both that assistant dean of students. As well as by the dean of accessibility.
+ Or accommodation. Not accessibility. The dean of accommodations. But it seems that
+ I did not follow through on maybe an email or something. And I still have a D- and
+ an F in those two classes. Even though I was under the assumption that I had non-academic
+ withdrawal. And that was all finished. And I would have W-I's instead of those failing
+ grades. So that needs to be dealt with. I need to follow up with that. Make this.
+ Make what I just said a sub-item of school enrollment. And then next is register
+ for classes. Which is blocked by the prior communication. And figuring out basically
+ if I need to take the exact two classes. To override those grades. Because for some
+ reason I can't have the non-academic withdrawal. I understood to be the case. To
+ have already been done. If for some reason that does not work. And I am stuck with
+ that D- and F. Then I need to take those classes again to override the grades. But
+ if I do get the NOG team to add W-I's for those classes. Which is withdrawal, illness,
+ doesn't matter. Then I'm not beholden to taking those two classes specifically.
+ So yeah. And then after that I guess just add one more sub-item for the school enrollment.
+ Which is check. Start dates. Discuss accommodations with the dean. The two aforementioned
+ deans. And check outlook. Check school outlook. Okay next main item. Which is this
+ one's also high priority. Oh the other high priority item I did already mention.
+ It was the follow-up on job applications. So I make that a high priority item. Please.
+ And then so this is another is a new another new item that is high priority. Very
+ high priority. And that is create a set of terms of agreement for the family plan
+ to get me out of the house. Which will include first sub first sub item is get the
+ text that was jotted down by my mother during our session with with Kate. The session
+ with that included Neil, myself, Susan who is my mother, Neil is my stepdad, and
+ Kate who is a therapist. My name is Jason. So from Susan I need to get the text
+ that was jotted down. Which includes some of the the criteria loosely that will
+ be required. I mean that are it required it includes some information about the
+ criteria that I need to list out more explicitly. Which are the terms of engagement
+ for the Airbnb 10-day proposal. Which may or may not still be on the table. So also
+ add a actually make this the first sub item. Add a add this as the first sub item
+ saying determine if this plan is still on the table by discussing with Susan and
+ Neil. Okay another high priority item so new item that is high priority is housing
+ and make that the main header and then sub item is look into shared rooms in Dallas
+ via the r slash UT Dallas subreddit and actually make this higher priority than
+ everything except the the Airbnb 10-day proposal with parents parents being referring
+ to Susan my mother and Neil my stepfather in this case that should be the highest
+ priority but then under that it should be housing and under that it should be school
+ anyway for housing is check for viable rooms on the UT Dallas subreddit uh for rent
+ then just check for viable rooms in uh on Craigslist and then just add a sub item
+ that says continue to search for rooms and show that you are searching for rooms
+ in some way and then also ensure that I am reaching out to if any if there's any
+ follow-up information make sure and do that I don't know how that's going to be
+ added I don't know if that's specifically an item but you can include it all oh
+ you can include it all in the last item of the housing search next is new so new
+ item non-priority or not high priority so within the bulk of the other random items
+ that's gonna be um set up proxmox on pc and then under that so sub item say um so
+ put this sub item at the bottom of the list regardless of how many are added just
+ make sure this stays at the bottom but it uh but create macvm and utilize blue bubbles
+ the application blue bubbles to to facilitate iMessage apple iMessage via an android
+ device okay new item sorry new sub item new sub item under proxmox is uh ensure
+ proxmox is set up correctly and make this the first one ensure proxmox is set up
+ correctly for access outside of the household outside of the hosting network from
+ anywhere and it is using a an ssl certificate obtained from let's encrypt via certbot
+ probably so another item under proxmox would be to create vm environment to run
+ lazy apply and ensure that this vm environment can be watched actively wherein i
+ think it's a feature proxmox so it just yeah create vm to facilitate uh lazy apply
+ running concurrently then also add a an item that is create vm to run tiktok user
+ download script which is yet to be put to paper but that doesn't matter just create
+ vm and automate likely via cron tasks or cron jobs so it needs to be a linux environment
+ but create vm environment to run to monitor and also download backlog of as well
+ as send out the discord webhook pings or send out discord embeds that are rich so
+ they include information about the post like metadata which should also be saved
+ as the corresponding text file to the to each post anyway uh just create vm for
+ tiktok user download system that's that's one i believe that's all for the proxmox
+ item so new main list item non-priority so actually i guess that's enough for now
+ thank you very much excellent let's see how this is interpreted
+ This is recording number 3 for the to-do list, so new main list item, create receipt
+ for meeting with Dan from Eureka Psyche, make this highest priority, missed an appointment,
+ you decide the title, what a summary title would be, this is the details and tributes
+ phrase better, but I missed the appointment the first time and now the second time,
+ the June 3rd which is today, but it must be that I have not done that, so create
+ a receipt for insurance, fuck that's going to have some implications, look into
+ that, new list item, also highest priority, I need follow-up on job opportunity
+ screening email, for front-end developer, it is in your jason.p.mcel email, follow-up
+ on that, what else? I'm trying to remember, add new main list item, medium high
+ priority, clean room, put on sheets, fold laundry, just general housekeeping, new
+ main list item, low priority, or just no priority, this is for fun, create or otherwise
+ obtain a method to, one, repel mosquitoes, so this is the sub list, one, repel mosquitoes
+ from the shed, two, cool the shed via either a swamp heater or a misting system,
+ though a misting system runs into the humidity issue, three, manage humidity and
+ air flow within the shed, and that's the end of that item. Okay, well, I'm going
+ to go meta, new list item with no priority, let's create, create an automated system
+ for sub list, one, calendar events, so google calendar or whatever calendar implementation
+ you want, but start with google calendar, so that's what I'll be using, two, email
+ integration, and so you should have functionality to take input from emails, and
+ then three, iMessage configuration, now this is going to be more difficult, it's
+ going to involve running a macOS instance of some sort on either Proxmox VM or otherwise
+ a Mac computer that is signed in to use iMessage and then run an API of some sort,
+ so as to relay and then read the contents of text messages and potentially send
+ them, four, phone calls, this should similarly, or maybe not, unknown on the implementation,
+ but functionality should exist to utilize OpenAI Whisper to, or if depending on
+ the implementation, or depending on the deployed version, either use a provided
+ transcription of calls and voicemails, or create one via, and by calls I meant voicemails,
+ yeah, sorry, like left voicemails, because it should be live, yeah, so utilize OpenAI
+ Whisper to create a transcription if there is not one provided, if there is one
+ provided in some way, for instance Apple is currently running an on-device LLM model,
+ I think it's Whisper actually, but anyway, if they're doing the work for us on their
+ device, then grab that transcription if possible and use that, then this and that
+ information in those voicemails should be accessible to the system, so next, I forgot
+ what number we're on, but next would be integration with chat apps, and so another
+ nested list will start, and the first one we will say Discord, for instance, so
+ yeah, that'll be the first one, first limitation is Discord, so the application
+ should be able to read and potentially write, as in send messages from a Discord
+ user, so this is going to be a, that would be a Discord self-bot, which is of course
+ in violation of Discord's Terms of Service, so that one is a little quiet, we're
+ not going to put that on the main front page, but that should exist, obviously there
+ needs to just be a standardized API doc and system, it's API documentation, so an
+ API implementation that can be used to create any sort of implementation, or any
+ sort of, to plug any sort of app into this system, which I haven't described yet,
+ but I will in a short moment, actually I'm sure I will now, they are, no, actually
+ I'll give you the rest of the sub list for some of the items, Slack should be one
+ of them, what else, oh, MS Teams should be one of them, so Microsoft Teams, Chat,
+ and also, that's all I can think of for now, but I'm sure there are more, okay,
+ so I'm going to actually describe now what the application will do, so from all
+ of those data vectors, I need a way to ingest all of the information as it is received,
+ and act upon it accordingly, this is going to be accomplished through an LLM, interpreting
+ information from each input vector, and then utilizing it to either take an action
+ itself, probably in the future, that's what I stubbed for a little while, not immediately,
+ or send a notification, otherwise, yeah, those are pretty much the main two functions,
+ so for instance, if I get an email that says, that asks for a, just to keep it simple
+ at first, if I get an email that just contains a Google Calendar invite, I should
+ first, the system should recognize that it is, in fact, a Google Calendar invite,
+ and send me a notification via, push notifications eventually should be implemented
+ through TestFlight, Swift application, but at first, any notification via probably
+ a Discord bot, they can have buttons on the embed, whatever, so it should send me
+ a notification that basically says, do you want to attend this, yes or no, and then
+ if I, and then it should be able to further, when I respond to that, take action,
+ and then add that event to my calendar, and obviously that functionality is redundant,
+ but the same thing should happen if, for instance, I am sent an email that just
+ contains this information, and does not, in fact, have, have the calendar event
+ already created, it should create its own calendar event, with the context of all
+ the information that was presented in the email, at least the information that is
+ relevant, so prioritize the names of people that are involved, the times, the, the
+ topic of the appointment, or event, what have you, the, just other, other information
+ that is, that is relevant, follow-ups, any sort of, any sort of prerequisite, things
+ that must be accomplished, all of that should be included within the new calendar
+ item, it should also have the ability to determine, say, for instance, someone's
+ name is not provided, but their email looks like a name, it should be able to interpret
+ that email, or just use the email, frankly, and then even as a, as a setting, it
+ should be able to send an invitation for the new Google Calendar event that it is
+ creating, from this email, that, that was, that I received, that what, the account
+ that set up, received, send, it could send that Google Calendar event invite to
+ that email, immediately. Further, more functionality should be that, provided the
+ user has configured, and there's going to be a lot of user configuration required
+ for this application to be functional, the intention will be for me, oh, another
+ item on the sub-list, I just remembered LinkedIn, that is a huge one, LinkedIn needs
+ to be monitored thoroughly, that need, LinkedIn chat needs to be utilized, and watched
+ for information events, etc., so, yeah, sorry, I got off track, so it should be
+ able to, if the user configures it, which I will, obviously, it should be able to
+ interpret calls, as I've already described, but they aren't necessarily all gonna
+ be voicemails, they could just be recordings of calls, and I suppose that doesn't
+ really matter, well, it does, because there'll be one person speaking versus two
+ people speaking, so it has to be able to diarize, and determine who is speaking,
+ what the context is, other metadata, like, about the call, can be used to determine
+ that, I suppose, like the fidelity of the input, or something of that sort, but
+ either way, in some way, that needs to be determined, or those need to be parsed,
+ I think context clues would be enough, once the model's trained, I mean, the purpose
+ of this, is to have a model that is continually being fine-tuned, and at first,
+ it will need to be trained, of course, but a model that is continuously being fine-tuned,
+ or a bot, an LLM-powered agent, that can proactively make sure I don't miss appointments,
+ send me notifications for important things, and have it develop its own understanding
+ of what I consider important, so for instance, it should be able to eventually filter
+ specific messages, or based on modes that I've set, so say I set a set quiet mode,
+ it should be able to intelligently, and based on the context, the sender, and any
+ other parameters that it has determined, that's where the LLM comes in, it should
+ be able to intelligently determine if a message meets the threshold of the mode
+ that is in to send a push notification, or to, yeah, or to send a push notification,
+ or if, and this is the value add feature, if it should instead simply provide a
+ generate and then send, potentially, and that'll be a setting that you have to click
+ a bunch of things, you know, disclaimers, because that could cause problems, but
+ it should be able to generate a plausible, based on the stylometry of input data,
+ end of data, it is parsed from, you know, email backlogs, or what have you, it should
+ be able to provide a bunch of information, or a bunch of your own writing for different
+ contexts, and then it should be able to synthesize plausible text messages, for
+ instance, that's a use case, so in, say, each person, each contact, the system also
+ needs to manage people that are in contact with the user, so essentially, one, people
+ need to be grouped, so people's accounts need to be grouped, so there may be an
+ iPhone contact and iMessage conversations, and then there may be discord conversations
+ that correspond, or sometimes they would maybe make reference to one another, there
+ may be telegram conversations, there may be signal conversations, those both need
+ to be added to the sublist, the way earlier sublist, but regardless, whatever the
+ communication is, it needs to be, they all, the accounts of users need to be tied
+ together when they are the same user, now this may not be accomplished, or if this
+ is obvious, if names are the same, or if accounts are linked, then oh, Steam, Steam
+ community is also another item for the sublist earlier, if this is not obvious,
+ if the account is not obvious, if the account linking is not an obvious decision,
+ then it doesn't need to be taken immediately by, it doesn't need to be made, the
+ associations don't need to be created by the application, especially immediately,
+ but it should prompt the end user to choose or to search for and then add a, if
+ a new notification comes in and the system is configured to listen to that channel
+ of discourse, then it should be able to, it should ask and say, hey, is this person,
+ which may, maybe it's a name, maybe it's a number, maybe it's a username, it should
+ say, hey, is blank information, someone you already have as a contact within the
+ system, would you like to, or it just, it'll ask that question and then it will
+ provide a search feature, and ideally it would suggest who it thinks it is, but
+ it's going to provide a search feature through the contacts list that it has developed,
+ or that has been input so far, and if not, if this is not an existing person, then
+ create a person and then start linking accounts, so ideally you'd have a phone number
+ for iMessage, a Discord account, a LinkedIn account, et cetera, all known to be
+ the same user, so as the system can use the relevant contacts between the two, so
+ there may need to be some model, there probably will, need to be model adjustments
+ made for each user, or for the correspondence between each user and each of their
+ contacts, because we want to make the most plausible messages possible when we're
+ autoresponding, that's what we're calling this, so in order to do that, we're going
+ to need to have the context of specifically the application, or specifically the
+ way in which the user, me, and the other party speak to one another, or correspond,
+ and that will change, as humans we talk to each other very differently, for instance,
+ do we talk to different people differently, just based on our shared experiences,
+ et cetera, and that needs to be, not understood, but it needs to be, well, it needs
+ to be noticed and then regurgitated, it needs to be matched when creating a response,
+ so as to not send a, for instance, send an email-type response in this very large,
+ broad, like, generalization, but don't send, like, a dear name, comma, new line,
+ then body text, that should never appear in a text message, for instance, because
+ that is inherently weird, that's a simple example, but that's the idea, okay, that's
+ a lot, but that's one of the items, put that at the bottom of the list, because
+ that's the meta item, that's, like, what, it should also have functionality to handle,
+ like, what I'm doing right now, like, should be able to dictate in a task, it should
+ have a to-do list built in that is rolling and is handled with a calendar, but I'm
+ rambling now, so please just put all of this information into the bottom list item,
+ thank you.
+ Alright, to-do list continued, this should be the same list, new non-priority, uh,
+ never mind, wait, new main list item, priority, uh, psychiatrist slash therapist
+ appointments, uh, and then sub-item, Daniel Lipton, just say Daniel, actually, don't
+ say a name, just say Eureka Psych, uh, new patient, and then, that's June 3rd, uh,
+ and I can't remember the time, so add a, add some note that says, get the time,
+ um, get the time from my email, and then also, so add another sub-item that is,
+ uh, Seton, S-E-T-O-N slash Ascension, spelled correctly, and then that will be June
+ 10th, uh, at, like, 830 AM, uh, but don't put the fucking, don't put the time in,
+ in that format, use 24 hour time, and just, no colon, just, like, 9 AM would be
+ 0900-0900, and 9 PM would be, uh, uh, hold on, 9 PM would be 2100, uh, 2100, alright,
+ okay, new, oh, wait, never mind, so sub-item, uh, from the same psychiatrist therapist
+ list, uh, main item, like, sub-item from that list, uh, get other appointment details
+ from email, uh, and other appointments, specifically Kate, uh, okay, and then finish
+ there for now, um, so new main list item, uh, so this person is gonna be referred
+ to as Meh, Meh as in M-E-H, Meh, um, that's so, that's a name, just for context,
+ so this is priority, uh, reach out to Meh about, uh, meeting, about paid for meeting,
+ and then, uh, it's just like description text or sub-item, I don't know, yeah, but
+ I guess we'll do description text, uh, for all, for all of them, or just if necessary,
+ so for this one, here's, this is, uh, that's, um, that's, um, ask Meh to provide
+ more information as to what needs to be prepared for said meeting, what the topic,
+ watch out, vehicle on shoulder ahead, ignore that, uh, ignore what that woman said,
+ um, so ask Meh to provide more information as to the topic of the meeting, uh, what,
+ if anything, he would like prepared for the meeting, uh, and what he expects from
+ the meeting, and then a, uh, time frame for the meeting, and then, uh, add a, add
+ a, add a sub-item that says schedule meeting, uh, and then another sub-item that
+ is prepare for meeting as necessary, and then another final sub-item that is, uh,
+ go to meeting, complete meeting. Uh, new, new main list item, priority, and that
+ would be, uh, sort out text's toll tag situation, uh, so details text now, details
+ will be, uh, create an NTAA slash toll tag slash text tag slash I have no fucking
+ idea, uh, account, and add a card to bill, um, and, and also mention many penalties
+ were levied to the tune of $521, which were paid off by Neil, who was supremely
+ pissed off about it, uh, but did it anyway, and so I guess the thank you should
+ be in order, although I already thanked him, but he ignored it, um, and then, so
+ yeah, just, just sort that out, it needs to be an item, an item, uh, thinking, uh,
+ oh yeah, uh, so new main list item, non-priority is, uh, internet, uh, internet
+ revamp for venue coffee slash paid internet scheme with potential membership upsell,
+ uh, opportunities, and then, so, uh, just details text for that would be, maybe
+ reach out to, reach out to, uh, I believe the email was coffeeoncongress at gmail.com,
+ but also, uh, make a reminder that I should just check a little, uh, little piece
+ of paper in my wallet, um, and about this concept, and then still details text,
+ revamp, uh, re-implement the internet situation at venue coffee, uh, uh, by, by
+ creating a new captive portal system, which allows for, uh, a better experience
+ for the user, no codes, no paper codes to be printed, uh, no code input, uh, more
+ consistent captive portal pop-up when necessary, uh, more obvious cut-off time when
+ purchased internet time is, uh, has ended, and add option to immediately purchase
+ more time via, uh, the captive portal, ideally this would happen after you are,
+ just immediately after you're kicked off, so currently it's three hours, it's each,
+ each, uh, allotted time block, so if you're on your computer for three hours, uh,
+ then after those three hours, the ideal user flow or the user, you know, yeah, user
+ flow would be the user is kicked off the network, no, never mind, sorry, that wouldn't
+ be ideal, the ideal flow would be the user, it, the internet access is removed,
+ uh, through to the, to the outside world, uh, and the, and the captive portal pop-up
+ is shown once again with a message explaining the situation that they've run out
+ of time, uh, as well as options to, one, immediately just purchase more time, uh,
+ via the whatever payment gateway, probably a power stripe, and also they've made
+ several options, like tiered, to purchase more time, uh, and then also potentially
+ options for joining a membership program, which allows for more seamless use of
+ the network, as well as there would need to be, uh, many other benefits, which are
+ TBD, so I just add that as an item, all of that, uh, non-priority, okay, let me
+ see if I can think of more, oh, yeah, uh, new main list item, non-priority is follow
+ up, uh, make the title influencer, uh, plan dash sky, uh, sub-item, uh, meeting,
+ scheduling, uh, and, and, uh, before that's, sorry, like, scratch that, scratch
+ that sub-item, make it, uh, initial meeting, set up, scheduling, uh, mutual understanding
+ of the purpose of the meeting, uh, then new item, new sub-item, sorry, new sub-item
+ of, uh, get TikTok analytics, uh, new sub-item, research, brand deal negotiations,
+ TikTok specific, uh, rates, uh, sponsorship terms, uh, ensure that all agreed upon,
+ uh, legal documents are being followed, uh, such as the TikTok terms of service,
+ the TikTok license agreement, if, uh, which isn't necessarily applicable, but, uh,
+ the TikTok, uh, creator marketplace membership terms, uh, and conditions, as well
+ as the TikTok privacy policy, uh, new sub-item, uh, facilitate, no, no, no, nevermind,
+ clear that, new sub-item, uh, create tentative roadmap for, for journey to become
+ influencer, or just, actually, just make the item create tentative roadmap, uh,
+ and run this by creator for feedback and iteration. All right, and then final, well,
+ not necessarily, but, uh, I think this last one I'll add here, a new main list item,
+ non-priority, is, uh, uh, Steam cryptos, parenthesis, Monero, close friend, uh,
+ exchange bot, uh, then, then, yeah, just leave that as just a title, and then that,
+ that is all for now, thank you.
