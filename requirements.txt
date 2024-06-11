@@ -1,9 +1,9 @@
-loguru~=0.7.2
+loguru
 markdownify==0.12.1
-openai~=1.30.5
-openai_whisper
+openai~=1.32.0
+openai-whisper
 python-dotenv==1.0.1
 PyYAML==6.0.1
-
 colorama~=0.4.6
 pydub~=0.25.1
+av

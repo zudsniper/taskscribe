@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+import tempfile
 
 from openai import OpenAI
 import os
@@ -12,10 +12,33 @@ from loguru import logger
 from dotenv import load_dotenv
 from pydub import AudioSegment
 
-# Load environment variables from .env file
+# --- HELPER FUNCTIONS --- #
+def str_to_bool(value):
+    """Receives all sorts of values and interprets as yes or no"""
+    if value is None:
+        return False
+    str_to_bool_map = {'true': True, 'yes': True, 'y': True, '0': False, 'false': False, 'no': False, 'n': False, '1': True}  # TODO: this is sort of haphazard, should be more robust I think
+    try:
+        return str_to_bool_map.get(value.lower(), bool(int(value)))
+    except ValueError:
+        return False
+
+
+# Populate environment variables from .env file
 load_dotenv()
 
-# Load OpenAI API key from environment variable
+# Check dev env vars / special behavior
+skip_whisper = not str_to_bool(os.getenv("DEV_LOAD_TRANSCRIPT"))  # no idea why I flipped it like this, but it's what I did
+transcript_path = os.getenv("DEV_TRANSCRIPT_PATH")  # should be to a text file that is the transcript in plaintext
+
+if skip_whisper:
+    logger.warning("[DEV_LOAD_TRANSCRIPT] Skipping OpenAI transcription of audio files & loading transcript from file instead.")
+    logger.info(f"Loading transcript from {transcript_path}...")
+    with open(transcript_path, 'r') as f:
+        dev_transcript = f.read()
+
+
+# get OpenAI API key from env var
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
 if not openai_api_key:
@@ -25,167 +48,81 @@ if not openai_api_key:
 client = OpenAI(api_key=openai_api_key)
 logger.info(Fore.GREEN + "Initialized OpenAI client." + Style.RESET_ALL)
 
-
-# set the API key
-# client.api_key = openai_api_key
-# NOTE  -- this is AUTOMATICALLY SET for the environment by the env variable.
-
 def is_audio_file(filename):
     """Check if the file is a supported audio format."""
     return any(filename.endswith(ext) for ext in ['.mp3', '.m4a', '.aac', '.wav'])
 
+def split_audio(file):
+    chunk_size_ms = 9 * 60 * 1000  # 9 minutes in milliseconds
 
-def get_audio_duration(file_path):
-    audio = AudioSegment.from_file(file_path)
-    return audio.duration_seconds
+    chunk_files = []
 
+    for i in range(0, len(file), chunk_size_ms):
+        chunk = file[i:i+chunk_size_ms]
+        # Create a temporary file for each chunk
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as f:
+            chunk.export(f.name, format='mp3')
+            chunk_files.append(f.name)
 
-# def split_audio(audio_file, chunk_duration):
-#     """Split audio file into chunks of specified duration."""
-#     audio = AudioSegment.from_file(audio_file, format=None)
-#     chunks = []
-#     current_start = 0
-#
-#     while current_start < len(audio):
-#         current_chunk = audio[current_start:current_start + chunk_duration * 1000]
-#         if format is None:
-#             chunks.append(current_chunk)
-#         else:
-#             chunks.append(current_chunk.export(format=format).read())
-#         current_start += chunk_duration * 1000
-#
-#     return chunks
-
-# def split_audio(audio_file, chunk_duration, formato=None):
-#     """Split audio file into chunks of specified duration."""
-#
-#     # Guess the file format based on its extension
-#     mimetype = mimetypes.guess_type(audio_file)[0]
-#     ext_format = mimetype.split('/')[-1] if mimetype else None
-#
-#     # Handle .m4a files
-#     # if formato == 'mp4a-latm':
-#     #     formato = 'aac'
-#     #
-#     # logger.debug("processing audio file: " + audio_file)
-#     # logger.debug("guessed format: " + ext_format)
-#     # if formato is None:
-#     #     formato = ext_format
-#
-#     audio = AudioSegment.from_file(audio_file, "aac") # TODO: dont fix this
-#     chunks = []
-#     current_start = 0
-#
-#     while current_start < len(audio):
-#         current_chunk = audio[current_start:current_start + chunk_duration * 1000]
-#         if formato is None:
-#             chunks.append(current_chunk)
-#         else:
-#             chunks.append(current_chunk.export(format=formato).read())
-#         current_start += chunk_duration * 1000
-#
-#     return chunks
-
-
-def split_audio(audio_file, chunk_duration):
-    """Split audio file into chunks of specified duration."""
-    # Open the input file
-    input_container = av.open(audio_file)
-
-    # Select the audio stream
-    audio_stream = next(s for s in input_container.streams if s.type == 'audio')
-
-    # Calculate the number of frames per chunk
-    frames_per_chunk = chunk_duration * audio_stream.rate
-
-    chunks = []
-    current_chunk = b''
-    current_frame = 0
-
-    # Iterate over the audio frames
-    for frame in input_container.decode(audio_stream):
-        # Add the frame to the current chunk
-        current_chunk += frame.planes[0]
-
-        # If the current chunk has enough frames, add it to the chunks list
-        if current_frame + frame.samples >= frames_per_chunk:
-            chunks.append(current_chunk)
-            current_chunk = b''
-            current_frame = 0
-
-        current_frame += frame.samples
-
-    # Add the last chunk if it's not empty
-    if current_chunk:
-        chunks.append(current_chunk)
-
-    return chunks
+    return chunk_files
 
 
 # TODO:
-#   - Utilize previously transcribed chunks as context for each new chunk in some AI powered way
+#   - Use the prompt field to provide context from the previous chunks (which must be length minimized as the max length is 241 characters)
+def transcribe_chunk(chunk, prompt):
+    transcription = client.audio.transcriptions.create(
+        model="whisper-1",
+        file=chunk,
+        language="en",
+        prompt=prompt,
+        response_format="text",
+    )
 
-def transcribe_chunk(chunk):
-    # Convert chunk to bytes
-    chunk_bytes = chunk.export("temp.wav", format="wav").read()
+    return transcription
 
-    # Make API request
-    with open("temp.wav", "rb") as audio_file:
-        response = client.audio.transcriptions.create(
-            model="whisper-1",
-            file=audio_file,
-            response_format="text",
-            prompt="" # TODO: this is 244 char max, use for acronyms, punctuation, and limited context.
-                      #   ...figure out how the hell to add context to the request.
-        )
-    return response.text
+def transcribe_audio(file):
+    audio_f = AudioSegment.from_file(file)
+    if audio_f.duration_seconds < 10 * 60:  # 10 minutes
+        return transcribe_chunk(audio_f, "")  # no prompt is correct when there is only 1 chunk
+    chunk_files = split_audio(audio_f)
 
+    transcription = ""
 
-def transcribe_audio(file_path):
-    "combine chunk transcriptions for final string"
-    chunks = split_audio(file_path, chunk_duration=get_audio_duration(file_path))
-    transcriptions = [transcribe_chunk(chunk) for chunk in chunks]
-    full_transcription = " ".join(transcriptions)
-    return full_transcription
+    index = 0
+    for chunk_file in chunk_files:
+        with open(chunk_file, 'rb') as f:
+            logger.info(f"Transcribing chunk: {chunk_file}" + Fore.WHITE + f" ({index + 1}/{len(chunk_files)})" + Style.RESET_ALL)
+            logger.debug(Fore.LIGHTWHITE_EX + f"chunk size: {os.path.getsize(chunk_file)} bytes" + Style.RESET_ALL)
+            transcription += transcribe_chunk(f, transcription)
+        os.remove(chunk_file)  # Delete the temporary file
+        index += 1
 
+    return transcription
 
-
-# def transcribe_audio(file_path):
-#     """Transcribe audio file using OpenAI Whisper model."""
-#     logger.info(f"Transcribing audio file: {file_path}")
-#     model = whisper.load_model("base")
-#     result = model.transcribe(file_path)
-#     return result['text']
-
-# def transcribe_audio(file_path):
-#     """Transcribe audio file using OpenAI Whisper ASR API."""
-#     logger.info(f"Transcribing audio file: {file_path}")
-#
-#     # Open the audio file
-#     with open(file_path, "rb") as audio_file:
-#         while True:
-#             # Read audio data in chunks
-#             audio_data = audio_file.read(1024)
-#             if not audio_data:
-#                 break
-#
-#             # Send the API request and get the response
-#             response = openai.Whisper.read(audio=audio_data)
-#
-#             # Check the response status
-#             if response['status'] != 'completed':
-#                 logger.error(f"Failed to transcribe audio file: {file_path}. Response status: {response['status']}")
-#                 return None
-#
-#             # Get the transcription
-#             result = response['choices'][0]['text']
-#             return result
-
+# TODO: FINISH THIS FUNCTION (it's like the entire value-add)
 def convert_to_yaml(transcription_text):
     """Convert transcription text to YAML format."""
-    # Here we assume the transcription text follows a certain structure
-    # This function should be adapted based on the specific structure of the transcription text
-    data = yaml.safe_load(transcription_text)
+    # TODO:
+    #   - Test this implementation with a variety of transcription texts to ensure it works as expected
+    #   - Work on the conversion prompt -- it could be more effective in guiding the AI to generate the desired output from a spoken transcription
+    conversion_prompt = "Convert the following transcription into a YAML formatted checklist: \n\n" + transcription_text + "\n\n---\n\n"
+    logger.debug("Conversion prompt (" + Fore.MAGENTA + str(len(conversion_prompt)) + Style.RESET_ALL + "): \n" + (conversion_prompt[:100] + "..." + conversion_prompt[-100:]) if len(conversion_prompt) > 100 else conversion_prompt + "\n")
+
+    logger.info("Converting transcription to YAML format using GPT...")
+    response = client.completions.create(
+        model="gpt-4o",  # 4o hopefully is a valid model for API
+        prompt=conversion_prompt,
+        max_tokens=1000,  # does this need to be modified dynamically? probably does :C
+        temperature=0.5,
+        top_p=1.0,
+        frequency_penalty=0.0,
+        presence_penalty=0.0,
+        stop=["\n"]
+    )  # what the fuck do these mean??
+
+    gen_yaml_str = response.choices[0].text.strip()
+
+    data = yaml.safe_load(gen_yaml_str)  # this is gonna throw hella errors
     return data
 
 
@@ -198,7 +135,10 @@ def convert_yaml_to_markdown(yaml_data):
 
 def process_file(file_path):
     """Process a single audio file to generate markdown checklist."""
-    transcription = transcribe_audio(file_path)
+    if skip_whisper:
+        transcription = dev_transcript
+    else:
+        transcription = transcribe_audio(file_path)
     yaml_data = convert_to_yaml(transcription)
     markdown_content = convert_yaml_to_markdown(yaml_data)
     output_file = file_path.rsplit('.', 1)[0] + '.md'
@@ -208,16 +148,25 @@ def process_file(file_path):
     return output_file
 
 
+# TODO:
+#   - Handle parse order of audio files: in example, they were parsed in an order which is not the order they were recorded in;
+#   - This may end up being inconsequential, but it's worth noting
 def process_directory(directory_path):
     """Process all audio files in a directory (non-recursively) to generate a combined markdown checklist."""
-    audio_files = [f for f in glob.glob(os.path.join(directory_path, '*')) if is_audio_file(f)]
-    all_transcriptions = []
-    for audio_file in audio_files:
-        transcription = transcribe_audio(audio_file)
-        yaml_data = convert_to_yaml(transcription)
-        all_transcriptions.append(yaml_data)
+    if skip_whisper:
+        combined_yaml = convert_to_yaml(dev_transcript)
+    else:
+        audio_files = [f for f in glob.glob(os.path.join(directory_path, '*')) if is_audio_file(f)]
+        all_transcriptions = []
+        for audio_file in audio_files:
+            logger.info(f"Processing audio file: {audio_file}")
+            transcription = transcribe_audio(audio_file)
+            logger.info(f"Transcription: {transcription}")
+            yaml_data = convert_to_yaml(transcription)
+            all_transcriptions.append(yaml_data)
 
-    combined_yaml = {'list': all_transcriptions}
+        combined_yaml = {'list': all_transcriptions}
+
     markdown_content = convert_yaml_to_markdown(combined_yaml)
     output_file = os.path.join(directory_path, os.path.basename(directory_path).upper() + '.md')
     with open(output_file, 'w') as f:
