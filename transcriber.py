@@ -57,6 +57,10 @@ if skip_whisper:
     with open(transcript_path, 'r') as f:
         dev_transcript = f.read()
 
+# Check if we should load JSON directly
+load_json_directly = str_to_bool(os.getenv("DEV_LOAD_JSON"))
+transcript_todo_path = os.getenv("DEV_TRANSCRIPT_JSON_PATH")
+
 # get OpenAI API key from env var
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
@@ -126,31 +130,33 @@ def transcribe_audio(file):
 # TODO: FINISH THIS FUNCTION (it's like the entire value-add)
 def convert_to_json(transcription_text):
     """Convert transcription text to JSON format."""
-    # TODO:
-    #   - Test this implementation with a variety of transcription texts to ensure it works as expected
-    #   - Work on the conversion prompt -- it could be more effective in guiding the AI to generate the desired output from a spoken transcription
-    conversion_prompt = "Convert the following transcription into a YAML formatted checklist: \n\n" + transcription_text + "\n\n---\n\n"
-    logger.debug("Conversion prompt (" + Fore.MAGENTA + str(len(conversion_prompt)) + Style.RESET_ALL + "): \n" + (
-                conversion_prompt[:100] + "..." + conversion_prompt[-100:]) if len(
-        conversion_prompt) > 100 else conversion_prompt + "\n")
+    if load_json_directly:
+        logger.info(f"Loading JSON directly from {transcript_todo_path} to skip GPT-4 conversion.")
+        with open(transcript_todo_path, 'r') as f:
+            return json.load(f)
+    else:
+        # TODO:
+        #   - Test this implementation with a variety of transcription texts to ensure it works as expected
+        #   - Work on the conversion prompt -- it could be more effective in guiding the AI to generate the desired output from a spoken transcription
+        conversion_prompt = "Convert the following transcription into a JSON formatted checklist: \n\n" + transcription_text + "\n\n---\n\n"
+        logger.debug("Conversion prompt (" + Fore.MAGENTA + str(len(conversion_prompt)) + Style.RESET_ALL + "): \n" + (
+                    conversion_prompt[:100] + "..." + conversion_prompt[-100:]) if len(
+            conversion_prompt) > 100 else conversion_prompt + "\n")
 
-    logger.info("Converting transcription to JSON format using GPT...")
-    # TODO:
-    # - Switched to the newer "openai.chat" format, docs here https://platform.openai.com/docs/guides/text-generation
-    # - The other one is deprecated
-    response = client.chat.completions.create(
-        model="gpt-4o",  # 4o hopefully is a valid model for API
-        max_tokens=1000,  # does this need to be modified dynamically? probably does :C
-        response_format={"type": "json_object"},
-        messages=[
-            {"role": "system", "content": config['conversions']['system_prompt']},  # ROLL
-            {"role": "user", "content": config['conversions']['user_prompt'] + transcription_text}  # GOALS
-        ]
-    )
+        logger.info("Converting transcription to JSON format using GPT...")
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            max_tokens=1000,
+            response_format={"type": "json_object"},
+            messages=[
+                {"role": "system", "content": config['conversions']['system_prompt']},
+                {"role": "user", "content": config['conversions']['user_prompt'] + transcription_text}
+            ]
+        )
 
-    gen_json_str = response.choices[0].message.content  # this will only be guaranteed to work with response format set to json_object
-    data = json.loads(str(gen_json_str))  # this is gonna throw hella errors
-    return data
+        gen_json_str = response.choices[0].message.content
+        data = json.loads(str(gen_json_str))
+        return data
 
 
 def convert_json_to_markdown(json_data):
