@@ -221,7 +221,7 @@ def process_file(file_path):
 def process_directory(directory_path):
     """Process all audio files in a directory (non-recursively) to generate a combined markdown checklist."""
     if skip_whisper:
-        combined_yaml = convert_to_json(dev_transcript)
+        combined_json = convert_to_json(dev_transcript)
     else:
         audio_files = [f for f in glob.glob(os.path.join(directory_path, '*')) if is_audio_file(f)]
         all_transcriptions = []
@@ -229,12 +229,14 @@ def process_directory(directory_path):
             logger.info(f"Processing audio file: {audio_file}")
             transcription = transcribe_audio(audio_file)
             logger.info(f"Transcription: {transcription}")
-            yaml_data = convert_to_json(transcription)
-            all_transcriptions.append(yaml_data)
+            json_data = convert_to_json(transcription)
+            # TODO: I do not know that this will work as we are literally just appending json data to a list...
+            all_transcriptions.append(json_data)
 
-        combined_yaml = {'list': all_transcriptions}
+        # TODO: this too? I don't know man... I don't know
+        combined_json = {'list': all_transcriptions}
 
-    markdown_content = convert_json_to_markdown(combined_yaml)
+    markdown_content = convert_json_to_markdown(combined_json)
     output_file = os.path.join(directory_path, os.path.basename(directory_path).upper() + '.md')
     with open(output_file, 'w') as f:
         f.write(markdown_content)
