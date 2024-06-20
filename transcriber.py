@@ -1,3 +1,4 @@
+import json
 import tempfile
 
 from openai import OpenAI
@@ -12,31 +13,49 @@ from loguru import logger
 from dotenv import load_dotenv
 from pydub import AudioSegment
 
+
 # --- HELPER FUNCTIONS --- #
 def str_to_bool(value):
     """Receives all sorts of values and interprets as yes or no"""
     if value is None:
         return False
-    str_to_bool_map = {'true': True, 'yes': True, 'y': True, '0': False, 'false': False, 'no': False, 'n': False, '1': True}  # TODO: this is sort of haphazard, should be more robust I think
+    str_to_bool_map = {'true': True, 'yes': True, 'y': True, '0': False, 'false': False, 'no': False, 'n': False,
+                       '1': True}  # TODO: this is sort of haphazard, should be more robust I think
     try:
         return str_to_bool_map.get(value.lower(), bool(int(value)))
     except ValueError:
         return False
 
 
+# --- LOAD CONFIGURATION FILE --- #
+# that we have for some reason
+
+config = {}
+
+
+def load_config():
+    global config
+    with open('cfg/config.json', 'r') as f:
+        config = json.load(f)
+
+
+# Call the function to load the configuration
+load_config()
+
 # Populate environment variables from .env file
 load_dotenv()
 
 # Check dev env vars / special behavior
-skip_whisper = not str_to_bool(os.getenv("DEV_LOAD_TRANSCRIPT"))  # no idea why I flipped it like this, but it's what I did
+skip_whisper = not str_to_bool(
+    os.getenv("DEV_LOAD_TRANSCRIPT"))  # no idea why I flipped it like this, but it's what I did
 transcript_path = os.getenv("DEV_TRANSCRIPT_PATH")  # should be to a text file that is the transcript in plaintext
 
 if skip_whisper:
-    logger.warning("[DEV_LOAD_TRANSCRIPT] Skipping OpenAI transcription of audio files & loading transcript from file instead.")
+    logger.warning(
+        "[DEV_LOAD_TRANSCRIPT] Skipping OpenAI transcription of audio files & loading transcript from file instead.")
     logger.info(f"Loading transcript from {transcript_path}...")
     with open(transcript_path, 'r') as f:
         dev_transcript = f.read()
-
 
 # get OpenAI API key from env var
 openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -48,9 +67,11 @@ if not openai_api_key:
 client = OpenAI(api_key=openai_api_key)
 logger.info(Fore.GREEN + "Initialized OpenAI client." + Style.RESET_ALL)
 
+
 def is_audio_file(filename):
     """Check if the file is a supported audio format."""
     return any(filename.endswith(ext) for ext in ['.mp3', '.m4a', '.aac', '.wav'])
+
 
 def split_audio(file):
     chunk_size_ms = 9 * 60 * 1000  # 9 minutes in milliseconds
@@ -58,7 +79,7 @@ def split_audio(file):
     chunk_files = []
 
     for i in range(0, len(file), chunk_size_ms):
-        chunk = file[i:i+chunk_size_ms]
+        chunk = file[i:i + chunk_size_ms]
         # Create a temporary file for each chunk
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as f:
             chunk.export(f.name, format='mp3')
@@ -80,6 +101,7 @@ def transcribe_chunk(chunk, prompt):
 
     return transcription
 
+
 def transcribe_audio(file):
     audio_f = AudioSegment.from_file(file)
     if audio_f.duration_seconds < 10 * 60:  # 10 minutes
@@ -91,7 +113,8 @@ def transcribe_audio(file):
     index = 0
     for chunk_file in chunk_files:
         with open(chunk_file, 'rb') as f:
-            logger.info(f"Transcribing chunk: {chunk_file}" + Fore.WHITE + f" ({index + 1}/{len(chunk_files)})" + Style.RESET_ALL)
+            logger.info(
+                f"Transcribing chunk: {chunk_file}" + Fore.WHITE + f" ({index + 1}/{len(chunk_files)})" + Style.RESET_ALL)
             logger.debug(Fore.LIGHTWHITE_EX + f"chunk size: {os.path.getsize(chunk_file)} bytes" + Style.RESET_ALL)
             transcription += transcribe_chunk(f, transcription)
         os.remove(chunk_file)  # Delete the temporary file
@@ -99,38 +122,59 @@ def transcribe_audio(file):
 
     return transcription
 
+
 # TODO: FINISH THIS FUNCTION (it's like the entire value-add)
-def convert_to_yaml(transcription_text):
-    """Convert transcription text to YAML format."""
+def convert_to_json(transcription_text):
+    """Convert transcription text to JSON format."""
     # TODO:
     #   - Test this implementation with a variety of transcription texts to ensure it works as expected
     #   - Work on the conversion prompt -- it could be more effective in guiding the AI to generate the desired output from a spoken transcription
     conversion_prompt = "Convert the following transcription into a YAML formatted checklist: \n\n" + transcription_text + "\n\n---\n\n"
-    logger.debug("Conversion prompt (" + Fore.MAGENTA + str(len(conversion_prompt)) + Style.RESET_ALL + "): \n" + (conversion_prompt[:100] + "..." + conversion_prompt[-100:]) if len(conversion_prompt) > 100 else conversion_prompt + "\n")
+    logger.debug("Conversion prompt (" + Fore.MAGENTA + str(len(conversion_prompt)) + Style.RESET_ALL + "): \n" + (
+                conversion_prompt[:100] + "..." + conversion_prompt[-100:]) if len(
+        conversion_prompt) > 100 else conversion_prompt + "\n")
 
-    logger.info("Converting transcription to YAML format using GPT...")
-    response = client.completions.create(
+    logger.info("Converting transcription to JSON format using GPT...")
+    # TODO:
+    # - Switched to the newer "openai.chat" format, docs here https://platform.openai.com/docs/guides/text-generation
+    # - The other one is deprecated
+    response = client.chat.completions.create(
         model="gpt-4o",  # 4o hopefully is a valid model for API
-        prompt=conversion_prompt,
         max_tokens=1000,  # does this need to be modified dynamically? probably does :C
-        temperature=0.5,
-        top_p=1.0,
-        frequency_penalty=0.0,
-        presence_penalty=0.0,
-        stop=["\n"]
-    )  # what the fuck do these mean??
+        response_format={"type": "json_object"},
+        messages=[
+            {"role": "system", "content": config['conversions']['system_prompt']},  # ROLL
+            {"role": "user", "content": config['conversions']['user_prompt'] + transcription_text}  # GOALS
+        ]
+    )
 
-    gen_yaml_str = response.choices[0].text.strip()
-
-    data = yaml.safe_load(gen_yaml_str)  # this is gonna throw hella errors
+    gen_json_str = response.choices[0].message.content  # this will only be guaranteed to work with response format set to json_object
+    data = json.loads(str(gen_json_str))  # this is gonna throw hella errors
     return data
 
 
-def convert_yaml_to_markdown(yaml_data):
-    """Convert YAML data to markdown formatted checklist using OpenAI API."""
-    logger.info("Converting YAML to Markdown format")
-    markdown_text = md(yaml.dump(yaml_data))
-    return markdown_text
+def convert_json_to_markdown(json_data):
+    """Convert JSON data to markdown formatted checklist."""
+    logger.info("Converting JSON to Markdown format")
+    markdown_lines = []
+
+    # TODO:
+    #  - This is a basic ass way to implement this
+    #  - Since this is just a PoC, this should be fine, but it is pretty dumb
+    def recurse_json(data, indent=0):
+        if isinstance(data, dict):
+            for key, value in data.items():
+                markdown_lines.append(' ' * indent + f"- **{key}**:")
+                recurse_json(value, indent + 2)
+        elif isinstance(data, list):
+            for item in data:
+                markdown_lines.append(' ' * indent + "-")
+                recurse_json(item, indent + 2)
+        else:
+            markdown_lines.append(' ' * indent + f"- {data}")
+
+    recurse_json(json_data)
+    return '\n'.join(markdown_lines)
 
 
 def process_file(file_path):
@@ -139,8 +183,8 @@ def process_file(file_path):
         transcription = dev_transcript
     else:
         transcription = transcribe_audio(file_path)
-    yaml_data = convert_to_yaml(transcription)
-    markdown_content = convert_yaml_to_markdown(yaml_data)
+    yaml_data = convert_to_json(transcription)
+    markdown_content = convert_json_to_markdown(yaml_data)
     output_file = file_path.rsplit('.', 1)[0] + '.md'
     with open(output_file, 'w') as f:
         f.write(markdown_content)
@@ -154,7 +198,7 @@ def process_file(file_path):
 def process_directory(directory_path):
     """Process all audio files in a directory (non-recursively) to generate a combined markdown checklist."""
     if skip_whisper:
-        combined_yaml = convert_to_yaml(dev_transcript)
+        combined_yaml = convert_to_json(dev_transcript)
     else:
         audio_files = [f for f in glob.glob(os.path.join(directory_path, '*')) if is_audio_file(f)]
         all_transcriptions = []
@@ -162,12 +206,12 @@ def process_directory(directory_path):
             logger.info(f"Processing audio file: {audio_file}")
             transcription = transcribe_audio(audio_file)
             logger.info(f"Transcription: {transcription}")
-            yaml_data = convert_to_yaml(transcription)
+            yaml_data = convert_to_json(transcription)
             all_transcriptions.append(yaml_data)
 
         combined_yaml = {'list': all_transcriptions}
 
-    markdown_content = convert_yaml_to_markdown(combined_yaml)
+    markdown_content = convert_json_to_markdown(combined_yaml)
     output_file = os.path.join(directory_path, os.path.basename(directory_path).upper() + '.md')
     with open(output_file, 'w') as f:
         f.write(markdown_content)

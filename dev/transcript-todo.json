@@ -1,0 +1,350 @@
+{
+  "todo_list": [
+    {
+      "title": "Reply to job application emails",
+      "description": "Follow up with people who sent follow-up emails.\n\nIf there are incomplete applications or non-rejections, note down the information in a Google Sheet or Form that needs to be set up.",
+      "priority": "high",
+      "type": ["work"]
+    },
+    {
+      "title": "Research for Kash",
+      "description": "Do research for Kash (K-A-S-H).\n\nNo further details provided.",
+      "priority": "medium",
+      "type": ["work"]
+    },
+    {
+      "title": "Email Lazy Apply people",
+      "description": "Convey interest in helping with their project, from fixing spelling mistakes and translation to improving UI and AI implementation.",
+      "priority": "high",
+      "type": ["work", "communication"],
+      "sub_items": [
+        {
+          "title": "Fix spelling mistakes or translation",
+          "description": "Improve text flow, fix UI, and improve the overall presentation."
+        },
+        {
+          "title": "Assist with AI implementation",
+          "description": "Address issues like incorrect automatic selection of job application answers and improve resume information fields with on-hover tooltips."
+        },
+        {
+          "title": "Enhance skill keyword handling",
+          "description": "Add default values for skill categories, improve tooltip descriptions, and allow users to set defaults for categories like databases and AI."
+        },
+        {
+          "title": "Short response answer synthesis",
+          "description": "Develop AI to generate short response answers using user's writing stylometry, requiring user-provided text samples."
+        }
+      ]
+    },
+    {
+      "title": "Re-add Steam authenticator",
+      "description": "Re-add authenticator for Bigzoinkle11 account using Steam desktop authenticator.\n\nOptionally create a Python code to accomplish the same task as Steam desktop authenticator, which is currently written in C#.",
+      "priority": "medium",
+      "type": ["misc", "technology"],
+      "sub_items": [
+        {
+          "title": "Create Python code",
+          "description": "Develop Python code to replace the Steam desktop authenticator due to personal preference and issues with the current application."
+        }
+      ]
+    },
+    {
+      "title": "Follow up with the deans",
+      "description": "Follow up on school enrollment and non-academic withdrawal issues to resolve D- and F grades.",
+      "priority": "high",
+      "type": ["school", "administration"],
+      "sub_items": [
+        {
+          "title": "Non-academic withdrawal",
+          "description": "Resolve D- and F grades to W-I for non-academic withdrawal."
+        },
+        {
+          "title": "Register for classes",
+          "description": "Register for required classes, blocked by prior communication.\n\nDetermine if the same two classes need to be retaken or if the withdrawal will be processed."
+        },
+        {
+          "title": "Check start dates and discuss accommodations",
+          "description": "Coordinate with the dean of students and the dean of accommodations about start dates and accommodations."
+        }
+      ],
+      "dates": [
+        {
+          "title": "Enrollment end date",
+          "datetime": "2024-08-18"
+        }
+      ]
+    },
+    {
+      "title": "Create terms of agreement for family plan",
+      "description": "Develop terms of agreement for Airbnb 10-day proposal.\n\nDetermine if the plan is still on the table by discussing with Susan and Neil.",
+      "priority": "high",
+      "type": ["personal"],
+      "sub_items": [
+        {
+          "title": "Determine plan status",
+          "description": "Discuss with Susan and Neil if the Airbnb 10-day proposal is still on the table."
+        },
+        {
+          "title": "Get jotted text",
+          "description": "Retrieve text from Susan that was jotted down during the session with Kate, which includes criteria that need to be listed more explicitly."
+        }
+      ]
+    },
+    {
+      "title": "Housing search",
+      "description": "Look into shared rooms in Dallas via the r/UT Dallas subreddit and other sources.",
+      "priority": "high",
+      "type": ["personal"],
+      "sub_items": [
+        {
+          "title": "Check UT Dallas subreddit",
+          "description": "Search for viable rooms on the UT Dallas subreddit."
+        },
+        {
+          "title": "Check Craigslist",
+          "description": "Search for viable rooms on Craigslist."
+        },
+        {
+          "title": "Continue room search",
+          "description": "Ensure active search for rooms and follow up on any leads."
+        }
+      ]
+    },
+    {
+      "title": "Set up Proxmox on PC",
+      "description": "Set up Proxmox and various VMs for different tasks, including iMessage, Lazy Apply, and TikTok user download script.",
+      "priority": "low",
+      "type": ["technology"],
+      "sub_items": [
+        {
+          "title": "Ensure Proxmox access",
+          "description": "Set up SSL certificate via Let's Encrypt and ensure access outside the network."
+        },
+        {
+          "title": "Create Mac VM for iMessage",
+          "description": "Utilize Blue Bubbles to facilitate iMessage via Android device."
+        },
+        {
+          "title": "Create VM for Lazy Apply",
+          "description": "Ensure the VM can run Lazy Apply concurrently."
+        },
+        {
+          "title": "Create VM for TikTok user download script",
+          "description": "Automate download and Discord webhook pings for TikTok user download script."
+        }
+      ]
+    },
+    {
+      "title": "Create receipt for meeting with Dan from Eureka Psyche",
+      "description": "Missed appointments need to be documented for insurance.\n\nLook into implications and gather necessary information.",
+      "priority": "highest",
+      "type": ["health", "administration", "appointment"],
+      "dates": [
+        {
+          "title": "Missed appointment",
+          "datetime": "2024-06-03"
+        }
+      ]
+    },
+    {
+      "title": "Follow up on job opportunity screening email",
+      "description": "Follow up on front-end developer screening email in jason.p.mcel email.",
+      "priority": "highest",
+      "type": ["work", "communication"]
+    },
+    {
+      "title": "Clean room",
+      "description": "Put on sheets, fold laundry, and general housekeeping.",
+      "priority": "medium high",
+      "type": ["personal"]
+    },
+    {
+      "title": "Shed improvements",
+      "description": "Implement methods to improve the shed, including repelling mosquitoes, cooling the shed, and managing humidity and airflow.",
+      "priority": "low",
+      "type": ["personal", "home improvement"],
+      "sub_items": [
+        {
+          "title": "Repel mosquitoes",
+          "description": "Create or obtain a method to repel mosquitoes from the shed."
+        },
+        {
+          "title": "Cool the shed",
+          "description": "Install either a swamp heater or misting system."
+        },
+        {
+          "title": "Manage humidity and airflow",
+          "description": "Ensure proper humidity and airflow within the shed."
+        }
+      ]
+    },
+    {
+      "title": "Automated system creation",
+      "description": "Create an automated system for managing tasks and events from multiple data sources, including emails, iMessages, phone calls, and chat apps.",
+      "priority": "none",
+      "type": ["technology"],
+      "sub_items": [
+        {
+          "title": "Calendar events",
+          "description": "Integrate with Google Calendar for event management."
+        },
+        {
+          "title": "Email integration",
+          "description": "Functionality to take input from emails and create calendar events or notifications."
+        },
+        {
+          "title": "iMessage configuration",
+          "description": "Run a macOS instance to facilitate iMessage integration."
+        },
+        {
+          "title": "Phone calls",
+          "description": "Utilize OpenAI Whisper for transcribing calls and voicemails."
+        },
+        {
+          "title": "Chat apps integration",
+          "description": "Integrate with various chat apps, including Discord, Slack, and Microsoft Teams.",
+          "sub_items": [
+            {
+              "title": "Discord",
+              "description": "Read and potentially send messages from a Discord user."
+            },
+            {
+              "title": "Slack",
+              "description": "Integrate with Slack."
+            },
+            {
+              "title": "Microsoft Teams",
+              "description": "Integrate with MS Teams."
+            }
+          ]
+        },
+        {
+          "title": "LLM-powered agent",
+          "description": "Develop an agent to proactively manage tasks and send notifications.\n\nThe agent should interpret input from various sources and act accordingly, such as creating calendar events or sending notifications."
+        }
+      ]
+    },
+    {
+      "title": "Psychiatrist/therapist appointments",
+      "description": "Manage appointments with psychiatrist/therapist, including Eureka Psych and Seton/Ascension.",
+      "priority": "high",
+      "type": ["health", "appointment"],
+      "sub_items": [
+        {
+          "title": "Eureka Psych new patient",
+          "description": "Appointment with Eureka Psych on June 3rd.\n\nGet the exact time from email.",
+          "dates": [
+            {
+              "title": "Appointment date",
+              "datetime": "2024-06-03"
+            }
+          ]
+        },
+        {
+          "title": "Seton/Ascension appointment",
+          "description": "Appointment with Seton/Ascension on June 10th at 0830.",
+          "dates": [
+            {
+              "title": "Appointment date",
+              "datetime": "2024-06-10T08:30"
+            }
+          ]
+        },
+        {
+          "title": "Get other appointment details",
+          "description": "Retrieve appointment details from email, including appointments with Kate."
+        }
+      ]
+    },
+    {
+      "title": "Reach out to Meh about meeting",
+      "description": "Discuss details and schedule meeting with Meh, including preparing necessary materials.",
+      "priority": "high",
+      "type": ["work", "communication"],
+      "sub_items": [
+        {
+          "title": "Request meeting details",
+          "description": "Ask Meh to provide more information about the meeting, including the topic and expectations."
+        },
+        {
+          "title": "Schedule meeting",
+          "description": "Set a time for the meeting."
+        },
+        {
+          "title": "Prepare for meeting",
+          "description": "Prepare necessary materials for the meeting."
+        },
+        {
+          "title": "Attend meeting",
+          "description": "Complete the meeting with Meh."
+        }
+      ]
+    },
+    {
+      "title": "Sort out Texas toll tag situation",
+      "description": "Create an account for toll tags and address penalties paid by Neil.",
+      "priority": "high",
+      "type": ["administration", "personal"],
+      "sub_items": [
+        {
+          "title": "Create account",
+          "description": "Create an NTAA/toll tag account and add a card."
+        },
+        {
+          "title": "Address penalties",
+          "description": "Mention the penalties paid by Neil and ensure proper setup to avoid future issues."
+        }
+      ]
+    },
+    {
+      "title": "Internet revamp for Venue Coffee",
+      "description": "Revamp the internet situation at Venue Coffee with a new captive portal system and potential membership upsell opportunities.",
+      "priority": "low",
+      "type": ["work", "technology"],
+      "sub_items": [
+        {
+          "title": "Reach out to Venue Coffee",
+          "description": "Contact Venue Coffee for details about the current setup. Check the piece of paper in the wallet for the email address."
+        },
+        {
+          "title": "Create captive portal system",
+          "description": "Implement a new captive portal system for better user experience, eliminating the need for printed codes and ensuring more consistent access."
+        },
+        {
+          "title": "Implement membership program",
+          "description": "Create a membership program for seamless network use, offering tiered options and additional benefits."
+        }
+      ]
+    },
+    {
+      "title": "Influencer plan with Sky",
+      "description": "Follow up on influencer plan with Sky, including meeting setup, TikTok analytics, and brand deal negotiations.",
+      "priority": "medium",
+      "type": ["work"],
+      "sub_items": [
+        {
+          "title": "Initial meeting setup",
+          "description": "Schedule and discuss the purpose of the meeting."
+        },
+        {
+          "title": "Get TikTok analytics",
+          "description": "Collect TikTok analytics for the plan."
+        },
+        {
+          "title": "Research brand deal negotiations",
+          "description": "Look into TikTok-specific rates and sponsorship terms. Ensure compliance with legal documents like TikTok terms of service and creator marketplace membership terms."
+        },
+        {
+          "title": "Create tentative roadmap",
+          "description": "Develop a roadmap for the influencer journey and get feedback from the creator."
+        }
+      ]
+    },
+    {
+      "title": "Steam cryptos exchange bot",
+      "description": "Develop a Monero exchange bot for Steam.",
+      "priority": "low",
+      "type": ["technology"]
+    }
+  ]
+}

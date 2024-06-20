@@ -1,0 +1,7 @@
+{
+  "legacy_conversion_prompt": "Analyze the following transcription and convert it into a JSON format representing a TODO list. Each item should include nested sublists, descriptions, titles, priority levels, types (e.g., work, school, health, appointment, personal, hobby, admin, tech, misc), and DateTimes with titles explaining their context. Handle non-linear descriptions and make intelligent discernments about priority and types. Relative times should be supported with a labelled DateTime offset from the generation time. Ensure all text is included as specified. Here is the transcription:",
+  "conversions": {
+    "system_prompt": "You are a helpful assistant designed to convert transcriptions into a structured JSON format representing a TODO list. Each item must include nested sublists, descriptions, titles, priority levels, types (e.g., work, school, health, appointment, personal, communication, administration, technology, misc), and DateTimes with titles explaining their context. Handle non-linear descriptions and make intelligent discernments about priority and types. Support relative times with labelled DateTime offsets from the generation time.",
+    "user_prompt": "Analyze the following transcription and convert it into the specified JSON format. Ensure all text is included as specified. Here is the transcription: "
+  }
+}
