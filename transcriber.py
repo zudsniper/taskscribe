@@ -155,25 +155,48 @@ def convert_to_json(transcription_text):
 
 def convert_json_to_markdown(json_data):
     """Convert JSON data to markdown formatted checklist."""
-    logger.info("Converting JSON to Markdown format")
-    markdown_lines = []
+    priority_map = {
+        "highest": "🔥",
+        "high": "🔴",
+        "medium high": "🟠",
+        "medium": "🟡",
+        "low": "🟢",
+        "none": "⚪"
+    }
 
-    # TODO:
-    #  - This is a basic ass way to implement this
-    #  - Since this is just a PoC, this should be fine, but it is pretty dumb
+    def get_priority_value(priority):
+        return ["highest", "high", "medium high", "medium", "low", "none"].index(priority)
+
     def recurse_json(data, indent=0):
         if isinstance(data, dict):
             for key, value in data.items():
-                markdown_lines.append(' ' * indent + f"- **{key}**:")
-                recurse_json(value, indent + 2)
+                if key == "title":
+                    markdown_lines.append(' ' * indent + f"- [ ] **{value}**")
+                elif key == "description":
+                    markdown_lines.append(' ' * (indent + 2) + f"{value}")
+                elif key == "priority":
+                    emoji = priority_map.get(value.lower(), "")
+                    markdown_lines.append(' ' * (indent + 2) + f"**Priority:** {emoji} {value.capitalize()}")
+                elif key == "type":
+                    markdown_lines.append(' ' * (indent + 2) + f"**Type:** {', '.join(value).capitalize()}")
+                elif key == "sub_items" or key == "dates":
+                    recurse_json(value, indent + 2)
+                else:
+                    recurse_json(value, indent + 2)
         elif isinstance(data, list):
             for item in data:
-                markdown_lines.append(' ' * indent + "-")
-                recurse_json(item, indent + 2)
+                recurse_json(item, indent)
         else:
-            markdown_lines.append(' ' * indent + f"- {data}")
+            markdown_lines.append(' ' * indent + f"- [ ] {data}")
 
-    recurse_json(json_data)
+    todo_list = json_data.get("todo_list", [])
+    sorted_todo_list = sorted(todo_list, key=lambda x: get_priority_value(x["priority"]))
+
+    markdown_lines = []
+    for item in sorted_todo_list:
+        recurse_json(item)
+        markdown_lines.append("")  # Add a blank line for separation between tasks
+
     return '\n'.join(markdown_lines)
 
 
