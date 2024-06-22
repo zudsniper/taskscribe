@@ -17,14 +17,7 @@ from pydub import AudioSegment
 # --- HELPER FUNCTIONS --- #
 def str_to_bool(value):
     """Receives all sorts of values and interprets as yes or no"""
-    if value is None:
-        return False
-    str_to_bool_map = {'true': True, 'yes': True, 'y': True, '0': False, 'false': False, 'no': False, 'n': False,
-                       '1': True}  # TODO: this is sort of haphazard, should be more robust I think
-    try:
-        return str_to_bool_map.get(value.lower(), bool(int(value)))
-    except ValueError:
-        return False
+    return str(value).lower() in ['true', 'yes', 'y', '1']
 
 
 # --- LOAD CONFIGURATION FILE --- #
@@ -46,9 +39,14 @@ load_config()
 load_dotenv()
 
 # Check dev env vars / special behavior
-skip_whisper = not str_to_bool(
+skip_whisper = str_to_bool(
     os.getenv("DEV_LOAD_TRANSCRIPT"))  # no idea why I flipped it like this, but it's what I did
 transcript_path = os.getenv("DEV_TRANSCRIPT_PATH")  # should be to a text file that is the transcript in plaintext
+
+logger.debug("skip_whisper: " + str(skip_whisper))
+logger.debug("os.getenv(...): " + os.getenv("DEV_LOAD_TRANSCRIPT"))
+logger.debug("transcript_path: " + transcript_path)
+logger.debug("os.getenv(...): " + os.getenv("DEV_TRANSCRIPT_PATH"))
 
 if skip_whisper:
     logger.warning(
@@ -61,6 +59,18 @@ if skip_whisper:
 load_json_directly = str_to_bool(os.getenv("DEV_LOAD_JSON"))
 transcript_todo_path = os.getenv("DEV_TRANSCRIPT_JSON_PATH")
 
+if load_json_directly:
+    logger.warning(
+        "[DEV_LOAD_JSON] Skipping GPT-4 conversion & loading JSON directly from file instead.")
+    logger.info(f"Loading JSON directly from {transcript_todo_path}...")
+    with open(transcript_todo_path, 'r') as f:
+        dev_json = json.load(f)
+
+logger.debug("load_json_directly: " + str(load_json_directly))
+logger.debug("os.getenv(...): " + os.getenv("DEV_LOAD_JSON"))
+logger.debug("transcript_todo_path: " + transcript_todo_path)
+logger.debug("os.getenv(...): " + os.getenv("DEV_TRANSCRIPT_JSON_PATH"))
+
 # get OpenAI API key from env var
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
@@ -72,6 +82,7 @@ client = OpenAI(api_key=openai_api_key)
 logger.info(Fore.GREEN + "Initialized OpenAI client." + Style.RESET_ALL)
 
 
+# TODO: Probably remove this, I don't think we use it?
 def is_audio_file(filename):
     """Check if the file is a supported audio format."""
     return any(filename.endswith(ext) for ext in ['.mp3', '.m4a', '.aac', '.wav'])
@@ -127,8 +138,7 @@ def transcribe_audio(file):
     return transcription
 
 
-# TODO: FINISH THIS FUNCTION (it's like the entire value-add)
-def convert_to_json(transcription_text):
+def convert_to_json(transcription_text: str):
     """Convert transcription text to JSON format."""
     if load_json_directly:
         logger.info(f"Loading JSON directly from {transcript_todo_path} to skip GPT-4 conversion.")
@@ -138,10 +148,6 @@ def convert_to_json(transcription_text):
         # TODO:
         #   - Test this implementation with a variety of transcription texts to ensure it works as expected
         #   - Work on the conversion prompt -- it could be more effective in guiding the AI to generate the desired output from a spoken transcription
-        conversion_prompt = "Convert the following transcription into a JSON formatted checklist: \n\n" + transcription_text + "\n\n---\n\n"
-        logger.debug("Conversion prompt (" + Fore.MAGENTA + str(len(conversion_prompt)) + Style.RESET_ALL + "): \n" + (
-                    conversion_prompt[:100] + "..." + conversion_prompt[-100:]) if len(
-            conversion_prompt) > 100 else conversion_prompt + "\n")
 
         logger.info("Converting transcription to JSON format using GPT...")
         response = client.chat.completions.create(
@@ -155,6 +161,7 @@ def convert_to_json(transcription_text):
         )
 
         gen_json_str = response.choices[0].message.content
+        logger.debug("--- Generated JSON string ---\n" + Style.DIM + gen_json_str + Style.RESET_ALL + "\n--- End of JSON string ---" + "\n")
         data = json.loads(str(gen_json_str))
         return data
 
@@ -212,8 +219,8 @@ def process_file(file_path):
         transcription = dev_transcript
     else:
         transcription = transcribe_audio(file_path)
-    yaml_data = convert_to_json(transcription)
-    markdown_content = convert_json_to_markdown(yaml_data)
+    json_data = convert_to_json(transcription)
+    markdown_content = convert_json_to_markdown(json_data)
     output_file = file_path.rsplit('.', 1)[0] + '.md'
     with open(output_file, 'w') as f:
         f.write(markdown_content)
